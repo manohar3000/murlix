@@ -101,5 +101,3 @@ async def show_session_picker():
         runner, session_id = result
         from main import run_chat_loop
         await run_chat_loop(console, runner, session_manager.user_id, session_id, None)
-    else:
-        console.print("[yellow]Session selection cancelled.[/yellow]") 

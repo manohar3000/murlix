@@ -100,11 +100,12 @@ class SessionManager:
         for i, s in enumerate(sessions):
             # Format timestamp nicely
             timestamp = s.last_update_time
+            timestamp = datetime.fromtimestamp(timestamp)
             
             # Create summary text
-            summary = f"💬 {s.session_summary[:50]}..." if s.session_summary else "No summary"
+            summary = f"💬 {s.session_summary[:50]}..." if s.session_summary else ""
             
-            title = f"Session {i+1} • {timestamp}\n{summary}"
+            title = f"Session ID: {s.id[:7]} • Last Updated: {timestamp.strftime('%d-%m-%Y %H:%M:%S')}  {summary}"
             choices.append(questionary.Choice(title=title, value=s.id))
             
         # Add option for new session with special styling
@@ -125,6 +126,7 @@ class SessionManager:
                 ('question', 'fg:cyan bold'),
                 ('pointer', 'fg:cyan bold'),
                 ('highlighted', 'fg:cyan bold'),
+                ('answer', 'fg:#ffffff'),         
             ])
         ).ask_async()
         
@@ -133,7 +135,6 @@ class SessionManager:
         elif result:
             return await self.resume_session(result)
             
-        self.console.print("[yellow]Session selection cancelled[/yellow]")
         return None
         
     async def cleanup(self):

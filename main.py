@@ -110,7 +110,7 @@ async def create_attractive_input(console, prompt_text, slash_handler):
         choices=choices,
         default="",
         qmark="▶ ",
-        match_middle=True,
+        match_middle=False,
         ignore_case=True,
         complete_style="COLUMN",
         meta_information={cmd: info.description for cmd, info in slash_handler.commands.items()},
