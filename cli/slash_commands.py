@@ -10,6 +10,7 @@ from rich.table import Table
 from rich.markdown import Markdown
 
 from core_agent.models import model_manager
+from cli.session import SessionManager
 
 @dataclass
 class SlashCommand:
@@ -24,6 +25,7 @@ class SlashCommandHandler:
     
     def __init__(self, console: Console):
         self.console = console
+        self.session_manager = SessionManager(console)
         self.commands: Dict[str, SlashCommand] = {}
         self._register_commands()
     
@@ -45,11 +47,12 @@ class SlashCommandHandler:
             "/clear": SlashCommand(
                 name="clear",
                 description="Clear current conversation history",
-                handler=self.handle_clear
+                handler=self.handle_clear,
+                usage="/clear"
             )
         }
     
-    async def handle_command(self, command: str, *args) -> Optional[str]:
+    async def handle_command(self, command: str, session_id: Optional[str] = None) -> Optional[str]:
         """
         Handle a slash command. Returns None if command was handled,
         or the original input if it wasn't a command.
@@ -62,7 +65,10 @@ class SlashCommandHandler:
         args = parts[1:] if len(parts) > 1 else []
         
         if cmd in self.commands:
-            await self.commands[cmd].handler(*args)
+            if cmd == "/clear" and session_id is not None:
+                await self.commands[cmd].handler(session_id)
+            else:
+                await self.commands[cmd].handler(*args)
             return None
             
         self.console.print(f"[red]Unknown command: {cmd}[/red]")
@@ -126,7 +132,26 @@ class SlashCommandHandler:
             
         self.console.print("[yellow]Invalid usage. Try /help for usage info.[/yellow]")
     
-    async def handle_clear(self, *args):
+    async def handle_clear(self, session_id: Optional[str] = None):
         """Clear conversation history."""
-        # Note: Actual history clearing is handled by the session manager
-        self.console.print("[green]Conversation history cleared.[/green]") 
+        if session_id is None:
+            self.console.print("[red]Error: No active session to clear[/red]")
+            return
+            
+        confirm = await questionary.confirm(
+            "Are you sure you want to clear the current conversation?",
+            default=False
+        ).ask_async()
+        
+        if confirm:
+            # Initialize session
+            with self.console.status("[bold cyan]Murlix[/bold cyan] is clearing conversation...", spinner="material"):
+                await self.session_manager.clear_session(session_id)
+
+            self.console.print(Panel(
+                "🧹 [green]Conversation cleared![/green]",
+                border_style="green",
+                padding=(0, 2)
+            ))
+        else:
+            self.console.print("[yellow]Clear operation cancelled.[/yellow]")

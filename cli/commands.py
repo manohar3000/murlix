@@ -18,7 +18,7 @@ def cli():
 
 @cli.command()
 @click.argument('query', required=False)
-def main(query: str = None):
+def main(query: str = ""):
     """Start Murlix in interactive mode or run a single query."""
     try:
         if query:

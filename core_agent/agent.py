@@ -26,7 +26,7 @@ mcp_toolsets = [
                         command='npx',
                         args=[
                             '-y',  # Arguments for the command
-                             "@upstash/context7-mcp@latest",
+                             "@upstash/context7-mcp",
                         ],
                     ),
                      timeout=5000000,

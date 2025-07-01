@@ -40,7 +40,7 @@ class SessionManager:
         return [
             SessionInfo(
                 id=s.id,
-                last_update_time=s.last_update_time,
+                last_update_time=datetime.fromtimestamp(s.last_update_time),
                 session_summary=s.state.get("session_summary", "")
             )
             for s in sessions.sessions
@@ -99,13 +99,12 @@ class SessionManager:
         choices = []
         for i, s in enumerate(sessions):
             # Format timestamp nicely
-            timestamp = s.last_update_time
-            timestamp = datetime.fromtimestamp(timestamp)
+            timestamp = s.last_update_time.strftime('%d-%m-%Y %H:%M:%S')
             
             # Create summary text
             summary = f"💬 {s.session_summary[:50]}..." if s.session_summary else ""
             
-            title = f"Session ID: {s.id[:7]} • Last Updated: {timestamp.strftime('%d-%m-%Y %H:%M:%S')}  {summary}"
+            title = f"Session ID: {s.id[:7]} • Last Updated: {timestamp}  {summary}"
             choices.append(questionary.Choice(title=title, value=s.id))
             
         # Add option for new session with special styling
@@ -141,3 +140,21 @@ class SessionManager:
         """Clean up resources."""
         for toolset in mcp_toolsets:
             await toolset.close() 
+
+    async def clear_session(self, session_id: str):
+        """Clear a session."""
+        await self.session_service.delete_session(
+            app_name=self.app_name,
+            user_id=self.user_id,
+            session_id=session_id
+        )
+        await self.session_service.create_session(
+            app_name=self.app_name,
+            user_id=self.user_id,
+            session_id=session_id
+        )
+        self.console.print(Panel(
+            f"🧹 [red]Session cleared:[/red] [dim]{session_id}[/dim]",
+            border_style="red",
+            padding=(0, 2)
+        ))
