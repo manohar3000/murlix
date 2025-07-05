@@ -4,6 +4,8 @@ Main entry point for Murlix.
 import os
 import sys
 import asyncio
+import utils
+
 from dotenv import load_dotenv
 from rich.console import Console
 from rich.panel import Panel
@@ -12,9 +14,7 @@ from rich.align import Align
 from rich import box
 from rich.markdown import Markdown
 from google.genai.types import Content, Part
-import questionary
 
-import utils
 from cli import SessionManager, SlashCommandHandler
 from cli.chat_loop import run_chat_loop, clear_screen
 

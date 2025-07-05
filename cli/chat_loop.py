@@ -160,4 +160,3 @@ async def run_chat_loop(console, runner, user_id, session_id, mcp_toolsets):
         if mcp_toolsets:
             for toolset in mcp_toolsets:
                 await toolset.close()
-    
