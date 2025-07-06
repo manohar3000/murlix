@@ -64,6 +64,7 @@ async def create_attractive_input(console, prompt_text, slash_handler):
 
 def show_agent_response(console, event):
     """Display agent responses with beautiful formatting"""
+    
     if event.content and event.content.parts:
         for part in event.content.parts:
             if hasattr(part, 'function_call') and part.function_call:
@@ -80,7 +81,25 @@ def show_agent_response(console, event):
                 console.print()
 
             elif hasattr(part, 'function_response') and part.function_response:
-                pass
+                if part.function_response.response['result'].isError:
+                    error_panel = Panel(
+                        f"❌ [red]Error in tool call[/red]",
+                        border_style="red",
+                        box=box.ROUNDED,
+                        padding=(0, 2)
+                    )
+                    console.print(error_panel)
+                    console.print()
+
+                else:
+                    tool_success_panel = Panel(
+                    f"[cyan] Tool Called Successfully [/cyan]",
+                    border_style="green",
+                    box=box.ROUNDED,
+                    padding=(0, 2),
+                )
+                    console.print(tool_success_panel)
+                    console.print()
 
     if event.is_final_response():
         if (
