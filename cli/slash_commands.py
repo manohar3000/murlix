@@ -52,10 +52,10 @@ class SlashCommandHandler:
             )
         }
     
-    async def handle_command(self, command: str, session_id: Optional[str] = None) -> Optional[str]:
+    async def handle_command(self, command: str, session_id: Optional[str] = None) -> Optional[Any]:
         """
         Handle a slash command. Returns None if command was handled,
-        or the original input if it wasn't a command.
+        a dict with session clear info if session was cleared, or the original input if it wasn't a command.
         """
         if not command.startswith("/"):
             return command
@@ -66,7 +66,8 @@ class SlashCommandHandler:
         
         if cmd in self.commands:
             if cmd == "/clear" and session_id is not None:
-                await self.commands[cmd].handler(session_id)
+                result = await self.commands[cmd].handler(session_id)
+                return result  # This will return a dict with session clear info if session was cleared
             else:
                 await self.commands[cmd].handler(*args)
             return None
@@ -146,12 +147,15 @@ class SlashCommandHandler:
         if confirm:
             # Initialize session
             with self.console.status("[bold cyan]Murlix[/bold cyan] is clearing conversation...", spinner="material"):
-                await self.session_manager.clear_session(session_id)
+                new_runner, new_session_id = await self.session_manager.clear_session(session_id)
 
             self.console.print(Panel(
                 "🧹 [green]Conversation cleared![/green]",
                 border_style="green",
                 padding=(0, 2)
             ))
+            
+            # Return the new runner and session ID
+            return {"status": "SESSION_CLEARED", "runner": new_runner, "session_id": new_session_id}
         else:
             self.console.print("[yellow]Clear operation cancelled.[/yellow]")

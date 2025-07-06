@@ -141,20 +141,27 @@ class SessionManager:
         for toolset in mcp_toolsets:
             await toolset.close() 
 
-    async def clear_session(self, session_id: str):
-        """Clear a session."""
+    async def clear_session(self, session_id: str) -> Tuple[Runner, str]:
+        """Clear a session and return a new Runner instance."""
+        # Delete the old session
         await self.session_service.delete_session(
             app_name=self.app_name,
             user_id=self.user_id,
             session_id=session_id
         )
-        await self.session_service.create_session(
+        
+        # Create a new session with the same ID
+        new_session = await self.session_service.create_session(
             app_name=self.app_name,
             user_id=self.user_id,
             session_id=session_id
         )
-        self.console.print(Panel(
-            f"🧹 [red]Session cleared:[/red] [dim]{session_id}[/dim]",
-            border_style="red",
-            padding=(0, 2)
-        ))
+        
+        # Create a new Runner instance for the cleared session
+        new_runner = Runner(
+            agent=root_agent,
+            app_name=self.app_name,
+            session_service=self.session_service
+        )
+        
+        return new_runner, session_id
