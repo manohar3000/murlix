@@ -149,6 +149,16 @@ async def run_chat_loop(console, runner, user_id, session_id, mcp_toolsets):
             result = await slash_handler.handle_command(user_input, session_id)
             if result is None:  # Command was handled
                 continue
+            elif isinstance(result, dict) and result.get("status") == "SESSION_CLEARED":
+                # Session was cleared, update runner and session_id
+                runner = result["runner"]
+                session_id = result["session_id"]
+                console.print(Panel(
+                    f"🔄 [green]Session cleared and refreshed![/green]",
+                    border_style="green",
+                    padding=(0, 1)
+                ))
+                continue
                 
             # Regular message
             console.print()
