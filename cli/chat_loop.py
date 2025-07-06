@@ -154,7 +154,7 @@ async def run_chat_loop(console, runner, user_id, session_id, mcp_toolsets):
                 runner = result["runner"]
                 session_id = result["session_id"]
                 console.print(Panel(
-                    f"🔄 [green]Session cleared and refreshed![/green]",
+                    f"🔄 [green]Session cleared! New session started:[/green] [dim]{session_id}[/dim]",
                     border_style="green",
                     padding=(0, 1)
                 ))

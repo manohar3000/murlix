@@ -142,26 +142,25 @@ class SessionManager:
             await toolset.close() 
 
     async def clear_session(self, session_id: str) -> Tuple[Runner, str]:
-        """Clear a session and return a new Runner instance."""
-        # Delete the old session
+        """Clear a session and return a new Runner instance with a new session."""
+        # Delete the old session completely
         await self.session_service.delete_session(
             app_name=self.app_name,
             user_id=self.user_id,
             session_id=session_id
         )
         
-        # Create a new session with the same ID
+        # Create a completely new session with a new ID
         new_session = await self.session_service.create_session(
             app_name=self.app_name,
-            user_id=self.user_id,
-            session_id=session_id
+            user_id=self.user_id
         )
         
-        # Create a new Runner instance for the cleared session
+        # Create a new Runner instance for the new session
         new_runner = Runner(
             agent=root_agent,
             app_name=self.app_name,
             session_service=self.session_service
         )
         
-        return new_runner, session_id
+        return new_runner, new_session.id

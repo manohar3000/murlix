@@ -8,32 +8,36 @@ The issue was in the implementation of the session clearing mechanism:
 
 1. **Database-Only Clear**: The original `clear_session` method only deleted and recreated the session in the database
 2. **Stale Runner Object**: The `Runner` object in the main chat loop maintained its own internal state and conversation history, which persisted after the database session was cleared
-3. **Memory Leak**: The old conversation context remained in memory even though the database session was cleared
+3. **Session ID Reuse**: Attempting to recreate a session with the same ID may not properly clear the event history in the ADK framework
+4. **Event History Persistence**: The Google ADK stores conversation history as events in the session, and these events might persist even after session recreation with the same ID
 
 ## Fix Implementation
 
 ### 1. Updated `SessionManager.clear_session` Method
 - **File**: `cli/session.py`
-- **Change**: Modified the method to return a new `Runner` instance along with the session ID
-- **Purpose**: Ensures a fresh Runner object is created for the cleared session
+- **Change**: Modified the method to create a completely new session with a new ID and return a new `Runner` instance
+- **Purpose**: Ensures both the session and runner are completely fresh with no residual state
 
 ```python
 async def clear_session(self, session_id: str) -> Tuple[Runner, str]:
-    """Clear a session and return a new Runner instance."""
-    # Delete the old session
+    """Clear a session and return a new Runner instance with a new session."""
+    # Delete the old session completely
     await self.session_service.delete_session(...)
     
-    # Create a new session with the same ID
-    new_session = await self.session_service.create_session(...)
+    # Create a completely new session with a new ID
+    new_session = await self.session_service.create_session(
+        app_name=self.app_name,
+        user_id=self.user_id
+    )
     
-    # Create a new Runner instance for the cleared session
+    # Create a new Runner instance for the new session
     new_runner = Runner(
         agent=root_agent,
         app_name=self.app_name,
         session_service=self.session_service
     )
     
-    return new_runner, session_id
+    return new_runner, new_session.id
 ```
 
 ### 2. Updated `SlashCommandHandler.handle_clear` Method
@@ -93,7 +97,15 @@ After implementing these changes, the `/clear` command should:
 - **User Experience**: Users can truly start fresh conversations
 - **No Memory Leaks**: Old conversation context is properly disposed of
 
+## Key Insight
+The critical insight that made this fix work was understanding that the Google ADK stores conversation history as **events** in the session. Simply recreating a session with the same ID might not properly clear these events. By creating a completely new session with a new ID, we ensure that:
+
+1. All previous conversation events are completely discarded
+2. The new session starts with a clean event history
+3. The agent has no access to previous conversation context
+
 ## Notes
-- The session ID remains the same after clearing (for consistency)
+- The session ID changes after clearing (to ensure complete state reset)
 - The fix maintains backward compatibility with existing functionality
 - All error handling and user confirmation flows remain unchanged
+- Users see the new session ID to confirm the session was truly cleared
