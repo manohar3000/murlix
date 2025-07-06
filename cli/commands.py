@@ -69,7 +69,7 @@ async def run_single_query(query: str):
                 session_id=session_id,
                 new_message=message
             ):
-                from main import show_agent_response
+                from cli.chat_loop import show_agent_response
                 show_agent_response(console, event)
     finally:
         await session_manager.cleanup()
@@ -87,7 +87,7 @@ async def resume_last_session():
         runner, session_id = await session_manager.resume_session(sessions[0].id)
     
     if runner:
-        from main import run_chat_loop
+        from cli.chat_loop import run_chat_loop
         await run_chat_loop(console, runner, session_manager.user_id, session_id, None)
     else:
         console.print("[red]Failed to initialize session.[/red]")
@@ -99,5 +99,5 @@ async def show_session_picker():
     
     if result:
         runner, session_id = result
-        from main import run_chat_loop
+        from cli.chat_loop import run_chat_loop
         await run_chat_loop(console, runner, session_manager.user_id, session_id, None)
