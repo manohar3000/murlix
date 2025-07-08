@@ -3,8 +3,38 @@ from google.adk.agents.llm_agent import LlmAgent
 from google.adk.tools.mcp_tool import StdioConnectionParams
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
 from mcp import StdioServerParameters
-
+import subprocess
 _allowed_path = os.path.dirname(os.path.abspath(__file__))
+
+def run_command(command: str):
+    """
+    Runs a terminal command and returns the output, error, and exit code.
+    
+    Args:
+        command (str or list): The command to run. Example: "ls -l" or ["ls", "-l"]
+    
+    Returns:
+        A tuple of (stdout, stderr, exit_code)
+    """
+    try:
+        result = subprocess.run(
+            command,
+            shell=isinstance(command, str),  # shell=True only if command is a string
+            text=True,
+            capture_output=True
+        )
+        return {
+            "stdout": result.stdout,
+            "stderr": result.stderr,
+            "exit_code": result.returncode
+        }
+    except Exception as e:
+        return {
+            "stdout": "",
+            "stderr": str(e),
+            "exit_code": -1
+        }
+ 
 
 mcp_toolsets = [
     MCPToolset(
@@ -33,16 +63,18 @@ mcp_toolsets = [
                ),
              ),
 
-#     MCPToolset(
-#                 connection_params=StdioConnectionParams(
-#                     server_params=StdioServerParameters(
-#                         command='uvx',
-#                         args=[
-#                             "mcp-server-git",
-#                         ],
-#                     ),
-#                 ),
-#             ),            
+    # MCPToolset(
+    #             connection_params=StdioConnectionParams(
+    #                 server_params=StdioServerParameters(
+    #                     command='npx',
+    #                     args=[
+    #                         "@cyanheads/git-mcp-server",
+    #                     ],
+    #                 ),
+    #                 timeout=5000000,
+    #             ),
+    #         ),      
+    run_command     
  ]
 
 
