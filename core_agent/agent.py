@@ -62,18 +62,7 @@ mcp_toolsets = [
                      timeout=5000000,
                ),
              ),
-
-    # MCPToolset(
-    #             connection_params=StdioConnectionParams(
-    #                 server_params=StdioServerParameters(
-    #                     command='npx',
-    #                     args=[
-    #                         "@cyanheads/git-mcp-server",
-    #                     ],
-    #                 ),
-    #                 timeout=5000000,
-    #             ),
-    #         ),      
+ 
     run_command     
  ]
 

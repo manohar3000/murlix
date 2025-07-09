@@ -5,8 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "anyio>=4.9.0",
     "click>=8.2.1",
     "google-adk",
+    "mcp>=1.9.4",
     "python-dotenv>=1.1.1",
     "questionary>=2.1.0",
     "rich>=14.0.0",
