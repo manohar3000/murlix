@@ -12,7 +12,7 @@ import questionary
 from rich.console import Console
 from rich.panel import Panel
 
-from core_agent.agent import root_agent, mcp_toolsets
+from core_agent.agent import root_agent, cleanup_mcp_toolsets
 
 @dataclass
 class SessionInfo:
@@ -138,8 +138,7 @@ class SessionManager:
         
     async def cleanup(self):
         """Clean up resources."""
-        for toolset in mcp_toolsets:
-            await toolset.close() 
+        await cleanup_mcp_toolsets() 
 
     async def clear_session(self, session_id: str) -> Tuple[Runner, str]:
         """Clear a session and return a new Runner instance."""

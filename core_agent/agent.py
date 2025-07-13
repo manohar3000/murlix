@@ -4,7 +4,13 @@ from google.adk.tools.mcp_tool import StdioConnectionParams
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
 from mcp import StdioServerParameters
 import subprocess
+import asyncio
+
 _allowed_path = os.path.dirname(os.path.abspath(__file__))
+
+# Global cleanup state tracker
+_cleanup_done = False
+_cleanup_lock = asyncio.Lock()
 
 def run_command(command: str):
     """
@@ -65,6 +71,29 @@ mcp_toolsets = [
  
     run_command     
  ]
+
+async def cleanup_mcp_toolsets():
+    """Safely clean up MCP toolsets with state tracking to prevent multiple cleanup attempts."""
+    global _cleanup_done
+    
+    async with _cleanup_lock:
+        if _cleanup_done:
+            return  # Already cleaned up
+        
+        try:
+            # Only clean up MCPToolset instances, not the run_command function
+            for toolset in mcp_toolsets:
+                if isinstance(toolset, MCPToolset):
+                    try:
+                        await toolset.close()
+                    except Exception:
+                        # Silently ignore cleanup errors to prevent exit issues
+                        pass
+        except Exception:
+            # Silently ignore any cleanup errors
+            pass
+        finally:
+            _cleanup_done = True
 
 
 root_agent = LlmAgent(

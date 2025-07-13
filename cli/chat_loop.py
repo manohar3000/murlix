@@ -121,9 +121,10 @@ def show_agent_response(console, event):
             )
             console.print(response_panel)
 
-async def run_chat_loop(console, runner, user_id, session_id, mcp_toolsets):
+async def run_chat_loop(console, runner, user_id, session_id, mcp_toolsets=None):
     """Run the main chat loop with the agent"""
     from cli.slash_commands import SlashCommandHandler  # Import here to avoid circular dependency
+    from core_agent.agent import cleanup_mcp_toolsets
     
     slash_handler = SlashCommandHandler(console)
     
@@ -185,7 +186,5 @@ async def run_chat_loop(console, runner, user_id, session_id, mcp_toolsets):
     except KeyboardInterrupt:
         console.print("\n👋 [yellow]Chat interrupted. Goodbye![/yellow]")
     finally:
-        # Clean up toolsets
-        if mcp_toolsets:
-            for toolset in mcp_toolsets:
-                await toolset.close()
+        # Clean up toolsets using centralized cleanup
+        await cleanup_mcp_toolsets()
