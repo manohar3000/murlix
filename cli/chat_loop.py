@@ -139,6 +139,7 @@ async def run_chat_loop(console, runner, user_id, session_id, mcp_toolsets):
                     box=box.MINIMAL,
                     padding=(0, 1)
                 )
+                await runner.close()
                 console.print(farewell_panel)
                 break
             

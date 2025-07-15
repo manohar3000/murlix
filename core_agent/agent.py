@@ -82,6 +82,7 @@ You are an AI assistant with access to:
 
 Use these tools proactively to produce accurate, context-aware, and practical responses. Always respect the specified file paths and repository structure, keep commits clear and well-described, and leverage Context7 for up-to-date technical details. Aim for concise, correct, and helpful outputs.
 Allowed directory: {_allowed_path}
+
     """,
     tools=mcp_toolsets,
 )

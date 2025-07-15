@@ -12,7 +12,7 @@ import questionary
 from rich.console import Console
 from rich.panel import Panel
 
-from core_agent.agent import root_agent, mcp_toolsets
+from core_agent.agent import mcp_toolsets, root_agent
 
 @dataclass
 class SessionInfo:
