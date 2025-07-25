@@ -76,4 +76,3 @@ def load_chat() -> None:
 
 if __name__ == "__main__":
     main()
-
