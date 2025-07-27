@@ -92,8 +92,6 @@ async def get_user_input() -> str:
         multiline=False,
         wrap_lines=True,
         key_bindings=bindings,
-        # Make completion more responsive
-        completion_menu_max_height=10,
         validate_while_typing=False,
     )
     
