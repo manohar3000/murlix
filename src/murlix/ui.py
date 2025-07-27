@@ -138,8 +138,14 @@ def show_agent_response(event):
 def show_ready_message():
     """Display the ready message when chat starts."""
     ready_panel = Panel(
-        "🚀 [bold green]Murlix[/bold green] is ready to chat!",
+        "🚀 [bold green]Murlix[/bold green] is ready to chat!\n[dim]Enhanced input with auto-completion enabled[/dim]",
         border_style="green",
         padding=(0, 2)
     )
     console.print(ready_panel)
+
+
+def show_input_separator():
+    """Show a subtle separator before user input."""
+    separator_text = Text("─" * 50, style="dim blue")
+    console.print(separator_text)
