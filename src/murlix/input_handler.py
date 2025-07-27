@@ -6,6 +6,7 @@ from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.styles import Style
 from prompt_toolkit.shortcuts import CompleteStyle
 from prompt_toolkit.formatted_text import HTML
+from prompt_toolkit.key_binding import KeyBindings
 from rich.text import Text
 
 from .slash_commands import slash_commands
@@ -19,20 +20,19 @@ class SlashCommandCompleter(Completer):
         """Get completions for slash commands."""
         text = document.text_before_cursor
         
-        # Only provide completions if we're at the start or after a slash
-        if text.startswith('/') or (len(text) == 0):
-            # If text starts with '/', remove it for matching
-            search_text = text[1:] if text.startswith('/') else text
+        # Only provide completions if we're at the start, empty, or starts with '/'
+        if text.startswith('/') or len(text) == 0:
             
             for command_name, command_obj in slash_commands.items():
-                # Remove the '/' from command name for matching
-                cmd_name = command_name[1:]
-                
-                if cmd_name.startswith(search_text.lower()):
+                # Check if command matches what user has typed
+                if command_name.startswith(text) or len(text) == 0:
+                    # Calculate the correct start position
+                    start_pos = -len(text) if text else 0
+                    
                     # Create completion with description
                     yield Completion(
-                        text=command_name,  # Include the '/' in completion
-                        start_position=-len(text),
+                        text=command_name,  # Full command with '/'
+                        start_position=start_pos,
                         display=f"{command_name} - {command_obj.description}",
                         style="class:command"
                     )
@@ -72,17 +72,29 @@ async def get_user_input() -> str:
     completer = SlashCommandCompleter()
     style = create_input_style()
     
+    # Create key bindings for better completion
+    bindings = KeyBindings()
+    
+    @bindings.add('c-space')  # Ctrl+Space to trigger completion
+    def _(event):
+        """Trigger completion menu with Ctrl+Space."""
+        event.app.current_buffer.start_completion()
+    
     # Create a prompt session for async input
     session = PromptSession(
         message=get_prompt_message(),
         completer=completer,
-        complete_style=CompleteStyle.MULTI_COLUMN,
+        complete_style=CompleteStyle.COLUMN,
         style=style,
         mouse_support=True,
         complete_while_typing=True,
         enable_history_search=True,
         multiline=False,
         wrap_lines=True,
+        key_bindings=bindings,
+        # Make completion more responsive
+        completion_menu_max_height=10,
+        validate_while_typing=False,
     )
     
     try:
@@ -136,9 +148,15 @@ def display_command_help_hint():
     """Display a helpful hint about available commands."""
     hint_text = Text()
     hint_text.append("💡 ", style="yellow")
-    hint_text.append("Tip: Type ", style="dim")
+    hint_text.append("Tips: Type ", style="dim")
     hint_text.append("/", style="cyan bold")
-    hint_text.append(" to see available commands with auto-completion", style="dim")
+    hint_text.append(" for commands • ", style="dim")
+    hint_text.append("Tab", style="green bold")
+    hint_text.append(" or ", style="dim")
+    hint_text.append("Ctrl+Space", style="green bold")
+    hint_text.append(" to complete • ", style="dim")
+    hint_text.append("↑↓", style="blue bold")
+    hint_text.append(" to navigate", style="dim")
     
     console.print(hint_text)
     console.print()
