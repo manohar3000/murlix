@@ -8,13 +8,19 @@ from .utils.console import console
 from .session import SessionManager
 from .slash_commands import handle_slash_command
 from .ui import show_agent_response
+from .input_handler import get_user_input, display_enhanced_welcome, display_command_help_hint
 
 
 async def run_chat_loop(runner: Runner, session_manager: SessionManager, session_id: str) -> None:
     """Run the main chat interaction loop."""
+    
+    # Display enhanced welcome and help hint
+    display_enhanced_welcome()
+    display_command_help_hint()
+    
     try:
         while True:
-            user_input = input("You: ")
+            user_input = get_user_input()
 
             if user_input.startswith('/'):
                 # Handle slash commands

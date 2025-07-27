@@ -19,18 +19,22 @@ class SlashCommand:
 
 def handle_help() -> None:
     """Display help information for slash commands."""
-    help_text = "[bold cyan]Available Commands:[/bold cyan]\n\n"
+    help_text = "[bold cyan]✨ Available Commands:[/bold cyan]\n\n"
     
     for cmd in slash_commands.values():
-        help_text += f"[green]{cmd.usage}[/green]\n"
-        help_text += f"  {cmd.description}\n\n"
+        help_text += f"[bright_green]{cmd.usage}[/bright_green]\n"
+        help_text += f"  [white]{cmd.description}[/white]\n\n"
     
-    help_text += "[dim]Tip: Use Ctrl+C to exit at any time[/dim]"
+    help_text += "[dim]💡 Tips:[/dim]\n"
+    help_text += "[dim]• Start typing with '/' to see auto-completion[/dim]\n"
+    help_text += "[dim]• Use ↑/↓ arrows for command history[/dim]\n"
+    help_text += "[dim]• Use Ctrl+C to exit at any time[/dim]"
     
     console.print(Panel(
         help_text,
-        title="Help",
-        border_style="blue",
+        title="🔧 Command Help",
+        title_align="left",
+        border_style="bright_blue",
         box=box.ROUNDED,
         padding=(1, 2)
     ))
@@ -74,31 +78,31 @@ def handle_slash_command(command: str) -> None:
 slash_commands = {
     "/help": SlashCommand(
         name="help",
-        description="Show list of available commands",
+        description="Show detailed help with all available commands and tips",
         handler=handle_help,
         usage="/help"
     ),
     "/quit": SlashCommand(
         name="quit",
-        description="Exit the interactive mode",
+        description="Exit Murlix and save your session automatically",
         handler=handle_quit,
         usage="/quit"
     ),
     "/sessions": SlashCommand(
         name="sessions",
-        description="List all available chat sessions",
+        description="View and manage your saved chat sessions",
         handler=handle_sessions,
         usage="/sessions"
     ),
     "/clear": SlashCommand(
         name="clear",
-        description="Clear the terminal screen",
+        description="Clear the terminal screen for a fresh start",
         handler=handle_clear,
         usage="/clear"
     ),
     "/new": SlashCommand(
         name="new",
-        description="Start a new chat session",
+        description="Start a completely new chat session",
         handler=handle_new,
         usage="/new"
     ),
