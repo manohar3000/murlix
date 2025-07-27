@@ -1,7 +1,7 @@
 """Enhanced input handler with auto-completion for Murlix."""
 
 from typing import List, Optional
-from prompt_toolkit import prompt
+from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.styles import Style
 from prompt_toolkit.shortcuts import CompleteStyle
@@ -65,27 +65,29 @@ def get_prompt_message():
     return HTML('<prompt>┌─ Murlix ─┐</prompt>\n<prompt>└─➤</prompt> ')
 
 
-def get_user_input() -> str:
+async def get_user_input() -> str:
     """Get user input with enhanced styling and auto-completion."""
     
     # Create completer and style
     completer = SlashCommandCompleter()
     style = create_input_style()
     
+    # Create a prompt session for async input
+    session = PromptSession(
+        message=get_prompt_message(),
+        completer=completer,
+        complete_style=CompleteStyle.MULTI_COLUMN,
+        style=style,
+        mouse_support=True,
+        complete_while_typing=True,
+        enable_history_search=True,
+        multiline=False,
+        wrap_lines=True,
+    )
+    
     try:
-        # Get input with auto-completion
-        user_input = prompt(
-            get_prompt_message(),
-            completer=completer,
-            complete_style=CompleteStyle.MULTI_COLUMN,
-            style=style,
-            mouse_support=True,
-            complete_while_typing=True,
-            enable_history_search=True,
-            multiline=False,
-            wrap_lines=True,
-            placeholder="Type your message or start with '/' for commands..."
-        )
+        # Get input with auto-completion (async)
+        user_input = await session.prompt_async()
         
         # Show confirmation of received input
         if user_input.strip():

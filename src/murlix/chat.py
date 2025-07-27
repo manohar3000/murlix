@@ -20,7 +20,7 @@ async def run_chat_loop(runner: Runner, session_manager: SessionManager, session
     
     try:
         while True:
-            user_input = get_user_input()
+            user_input = await get_user_input()
 
             if user_input.startswith('/'):
                 # Handle slash commands
