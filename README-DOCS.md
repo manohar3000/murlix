@@ -78,7 +78,25 @@ docs/
 
 ## 🌐 GitHub Pages Deployment
 
-The documentation automatically deploys to GitHub Pages when you push to the `main` branch. The workflow is configured in `.github/workflows/docs.yml`.
+The documentation automatically deploys to GitHub Pages when you push to the `main` branch.
+
+### ⚠️ Important: First-Time Setup Required
+
+**Before the workflow can run successfully, you need to enable GitHub Pages:**
+
+1. **Go to your repository Settings**
+2. **Click "Pages" in the left sidebar**
+3. **Set Source to "GitHub Actions"** (not "Deploy from a branch")
+4. **Save the configuration**
+
+See `GITHUB-PAGES-SETUP.md` for detailed instructions.
+
+### Workflow Options
+
+- **Primary**: `.github/workflows/docs.yml` - Full-featured with Pages API
+- **Fallback**: `.github/workflows/docs-simple.yml` - Works without pre-configuration
+
+If you get "Pages not enabled" errors, try renaming `docs-simple.yml` to `docs.yml`.
 
 ## 📖 More Information
 
