@@ -1,0 +1,142 @@
+/* Extra utilities and overrides */
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--md-default-bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--md-default-fg-color--lighter);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--md-default-fg-color--light);
+}
+
+/* Enhanced typography */
+.md-typeset h1 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.md-typeset h2 {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.md-typeset h3 {
+  font-weight: 600;
+}
+
+/* Code styling improvements */
+.md-typeset code {
+  background: var(--md-code-bg-color);
+  padding: 0.2em 0.4em;
+  border-radius: 6px;
+  font-size: 0.85em;
+}
+
+.md-typeset pre code {
+  background: transparent;
+  padding: 0;
+}
+
+/* Link styling */
+.md-typeset a {
+  transition: color 0.2s ease;
+}
+
+.md-typeset a:hover {
+  text-decoration: underline;
+}
+
+/* Table improvements */
+.md-typeset table:not([class]) th {
+  font-weight: 600;
+  background: var(--md-default-fg-color--lightest);
+}
+
+.md-typeset table:not([class]) tr:hover {
+  background: var(--md-default-fg-color--lightest);
+}
+
+/* Blockquote styling */
+.md-typeset blockquote {
+  border-left: 4px solid var(--md-primary-fg-color);
+  background: var(--md-default-fg-color--lightest);
+  padding: 1rem;
+  border-radius: 0 6px 6px 0;
+}
+
+/* List improvements */
+.md-typeset ul li {
+  margin: 0.5em 0;
+}
+
+.md-typeset ol li {
+  margin: 0.5em 0;
+}
+
+/* Header anchor links */
+.md-typeset .headerlink {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.md-typeset h1:hover .headerlink,
+.md-typeset h2:hover .headerlink,
+.md-typeset h3:hover .headerlink,
+.md-typeset h4:hover .headerlink,
+.md-typeset h5:hover .headerlink,
+.md-typeset h6:hover .headerlink {
+  opacity: 1;
+}
+
+/* Navigation improvements */
+.md-nav__item .md-nav__link--active {
+  font-weight: 600;
+}
+
+/* Search improvements */
+.md-search__output {
+  border-radius: 8px;
+}
+
+.md-search-result__item {
+  border-radius: 6px;
+  margin: 0.5rem 0;
+}
+
+/* Footer improvements */
+.md-footer {
+  background: var(--md-default-bg-color);
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+}
+
+/* Print styles */
+@media print {
+  .hero-section {
+    background: none !important;
+    color: black !important;
+  }
+  
+  .feature-card {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+  
+  .btn {
+    display: none !important;
+  }
+}
