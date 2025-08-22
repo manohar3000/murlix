@@ -11,23 +11,31 @@ This directory contains the complete documentation for Murlix, built with MkDocs
 
 ### Local Development
 
-1. **Install dependencies**:
-   ```bash
-   # Using pip in virtual environment (recommended)
-   python -m venv docs-env
-   source docs-env/bin/activate  # On Windows: docs-env\Scripts\activate
-   pip install -r requirements-docs.txt
-   
-   # Or install globally (if allowed)
-   pip install mkdocs-material mkdocs-git-revision-date-localized-plugin mkdocs-minify-plugin
-   ```
+**Option 1: Automated Setup (Recommended)**
+```bash
+# Run the setup script - it handles everything automatically
+python setup-docs.py
+```
 
-2. **Serve documentation locally**:
-   ```bash
-   mkdocs serve
-   ```
-   
-   Visit `http://127.0.0.1:8000` to view the documentation.
+**Option 2: Manual Setup**
+```bash
+# Create virtual environment
+python -m venv docs-env
+
+# Activate virtual environment
+# On Windows:
+docs-env\Scripts\activate
+# On macOS/Linux:
+source docs-env/bin/activate
+
+# Install dependencies
+pip install -r requirements-docs.txt
+
+# Serve documentation
+mkdocs serve
+```
+
+Visit `http://127.0.0.1:8000` to view the documentation.
 
 3. **Build for production**:
    ```bash
